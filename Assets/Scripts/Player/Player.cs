@@ -7,20 +7,32 @@ using UnityEngine.Rendering;
 
 public class Player : MonoBehaviour
 {
-    //Variables
+    //Movimiento
     public float moveSpeed = 3f;
     public float jumpSpeed = 5f;
     public float fallMultiplier = 0.5f;
     public float lowJumpMultiplier = 1f;
+
+    //Componentes
     Rigidbody2D Rb2D;
     SpriteRenderer spriteRenderer;
-    public bool doubleJump;
+    public GameObject MeleeAttackArea;
+
+    //Banderas
+    public bool canDoubleJump;
     public bool canMove;
     public bool dashing;
+    public bool attacking;
+
+    //Cooldowns
     public float dashCooldown = 0.5f;
     public float currentDashCooldown = 0;
+
+    //Duracion
     public float dashDuration = 0.2f;
     public float currentDashDuration = 0;
+    public float meleeAttackDuration = 0.2f;
+    public float currentMeleeAttackDuration = 0;
 
     private void Awake()
     {
@@ -31,11 +43,33 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        AttackLogic();
         HorizontalMoveLogic();
         JumpLogic();
         DoubleJumpLogic();
         CustomGravityLogic();
         DashLogic();
+    }
+    void AttackLogic() 
+    {
+        if (canMove) 
+        {
+            if (Input.GetKeyDown("x") && !attacking)
+            {
+                attacking = true;
+                currentMeleeAttackDuration = meleeAttackDuration;
+                MeleeAttackArea.SetActive(true);
+            }
+        }
+        if (currentMeleeAttackDuration > 0)
+        {
+            currentMeleeAttackDuration -= Time.deltaTime;
+        }
+        else 
+        {
+            attacking = false;
+            MeleeAttackArea.SetActive(false);
+        }
     }
     void HorizontalMoveLogic() 
     {
@@ -47,11 +81,14 @@ public class Player : MonoBehaviour
                 {
                     Rb2D.velocity = new Vector2(-moveSpeed, Rb2D.velocity.y);
                     spriteRenderer.flipX = true;
+                    MeleeAttackArea.transform.localScale = new Vector2(-1, 1);
+                    
                 }
                 else if (Input.GetAxis("Horizontal") > 0)
                 {
                     Rb2D.velocity = new Vector2(moveSpeed, Rb2D.velocity.y);
                     spriteRenderer.flipX = false;
+                    MeleeAttackArea.transform.localScale = new Vector2(1, 1);
                 }
             }
             else
@@ -72,14 +109,14 @@ public class Player : MonoBehaviour
     {
         if (CheckGround.isGrounded)
         {
-            doubleJump = true;
+            canDoubleJump = true;
         }
         else
         {
-            if (Input.GetButtonDown("Jump") && doubleJump && canMove)
+            if (Input.GetButtonDown("Jump") && canDoubleJump && canMove)
             {
                 Rb2D.velocity = new Vector2(Rb2D.velocity.x, jumpSpeed);
-                doubleJump = false;
+                canDoubleJump = false;
             }
 
         }
@@ -92,7 +129,7 @@ public class Player : MonoBehaviour
             currentDashCooldown -= Time.deltaTime;
         }
         // logica al activar el dash
-        if (Input.GetKey("z") && currentDashCooldown <= 0 && !dashing) 
+        if (Input.GetKey("z") && currentDashCooldown <= 0 && !dashing && canMove) 
         {
             canMove = false;
             currentDashDuration = 0;

@@ -1399,6 +1399,21 @@ PrefabInstance:
       propertyPath: _dashCurrentTime
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4519570618327842496, guid: 9183a4c878fbc6647af50dfdd376eb9e,
+        type: 3}
+      propertyPath: m_Radius
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4519570618327842496, guid: 9183a4c878fbc6647af50dfdd376eb9e,
+        type: 3}
+      propertyPath: m_Offset.x
+      value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4519570618327842496, guid: 9183a4c878fbc6647af50dfdd376eb9e,
+        type: 3}
+      propertyPath: m_Offset.y
+      value: 0.51
+      objectReference: {fileID: 0}
     - target: {fileID: 8030091225644239557, guid: 9183a4c878fbc6647af50dfdd376eb9e,
         type: 3}
       propertyPath: m_LocalPosition.x
